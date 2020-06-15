@@ -6,10 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.yalantis.ucrop.R;
 import com.yalantis.ucrop.callback.BitmapCropCallback;
@@ -22,6 +23,7 @@ import com.yalantis.ucrop.util.RectUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Oleksii Shliama (https://github.com/shliama).
@@ -80,9 +82,10 @@ public class CropImageView extends TransformImageView {
         final CropParameters cropParameters = new CropParameters(
                 mMaxResultImageSizeX, mMaxResultImageSizeY,
                 compressFormat, compressQuality,
-                getImageInputUri(), getImageOutputPath(), getExifInfo());
+                getImageInputPath(), getImageOutputPath(), getExifInfo());
 
-        new BitmapCropTask(getContext(), getViewBitmap(), imageState, cropParameters, cropCallback).execute();
+        new BitmapCropTask(getContext(), getViewBitmap(), imageState, cropParameters, cropCallback)
+                .executeOnExecutor(Executors.newCachedThreadPool());
     }
 
     /**
